@@ -1,6 +1,5 @@
-#define WIN32_LEAN_AND_MEAN             // 从 Windows 头文件中排除极少使用的内容
+#define WIN32_LEAN_AND_MEAN // 从 Windows 头文件中排除极少使用的内容
 // Windows 头文件
-#define UNICODE
 #include <windows.h>
 #include <cstdio>
 #include <iostream>
@@ -8,12 +7,16 @@
 
 #include <neaky/utils.h>
 
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+#include "../neakymodule.h"
+
 // 向HKEY_CURRENT_USER\Software\\Microsoft\\Windows\\CurrentVersion\\Run里加入自运行项目
-BOOL SetStratupReg(const WCHAR * key, const WCHAR * path)
+BOOL SetStratupReg(const WCHAR *key, const WCHAR *path)
 {
 	//根键、子键名称和到子键的句柄
 	HKEY hRoot = HKEY_CURRENT_USER;
-	HKEY hKey;//打开指定子键
+	HKEY hKey; //打开指定子键
 	DWORD dwDisposition = REG_OPENED_EXISTING_KEY;
 	//如果不存在就创建
 	LONG lRet = RegCreateKeyEx(
@@ -24,28 +27,24 @@ BOOL SetStratupReg(const WCHAR * key, const WCHAR * path)
 		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS,
 		NULL,
 		&hKey,
-		&dwDisposition
-	);
+		&dwDisposition);
 	if (lRet != ERROR_SUCCESS)
 	{
-		puts("SetStratupReg: open registry failed");
-		ShowError(lRet);
+		PyErr_SetString(NeakyError, "SetStratupReg: open registry failed");
 		return FALSE;
 	}
-	
+
 	//创建一个新的键值，设置键值数据为文件
 	lRet = RegSetValueEx(
 		hKey,
 		key,
 		0,
 		REG_SZ,
-		(BYTE*)path,
-		(DWORD)(wcslen(path) * 2)
-	);
+		(BYTE *)path,
+		(DWORD)(wcslen(path) * 2));
 	if (lRet != ERROR_SUCCESS)
 	{
-		puts("SetStratupReg: reg set value failed");
-		ShowError(lRet);
+		PyErr_SetString(NeakyError, "SetStratupReg: reg set value failed");
 		return FALSE;
 	}
 	puts("SetStratupReg: reg set value success");
@@ -55,20 +54,19 @@ BOOL SetStratupReg(const WCHAR * key, const WCHAR * path)
 }
 
 // 删除自启动注册表项
-BOOL DeleteStratupReg(const WCHAR * key)
+BOOL DeleteStratupReg(const WCHAR *key)
 {
 	//根键、子键名称和到子键的句柄
 	HKEY hRoot = HKEY_CURRENT_USER;
-	HKEY hKey;//打开指定子键
+	HKEY hKey; //打开指定子键
 	long lReturn = RegOpenKeyEx(hRoot,
-		L"Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-		NULL,
-		KEY_ALL_ACCESS,
-		&hKey);
+								L"Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+								NULL,
+								KEY_ALL_ACCESS,
+								&hKey);
 	if (lReturn != ERROR_SUCCESS)
 	{
-		puts("DeleteStratupReg: open registry failed");
-		ShowError(lReturn);
+		PyErr_SetString(NeakyError, "DeleteStratupReg: open registry failed");
 		return FALSE;
 	}
 
@@ -77,8 +75,7 @@ BOOL DeleteStratupReg(const WCHAR * key)
 		key);
 	if (lReturn != ERROR_SUCCESS)
 	{
-		puts("DeleteStratupReg: reg set value failed");
-		ShowError(lReturn);
+		PyErr_SetString(NeakyError, "DeleteStratupReg: reg set value failed");
 		return FALSE;
 	}
 	puts("DeleteStratupReg: reg set value success");

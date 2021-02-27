@@ -59,3 +59,39 @@ PyDoc_STRVAR(
     "def delete_startup_reg(key: str)\n"
     "Delete an entry in startup registry");
 
+PyDoc_STRVAR(
+    get_username_doc,
+    "get_username()\n"
+    "--\n"
+    "\n"
+    "def get_username()\n"
+    "return the user name of current thread's token.");
+
+PyDoc_STRVAR(
+    elevate_thread_doc,
+    "elevate_thread(pid: int, /)\n"
+    "--\n"
+    "\n"
+    "def elevate_thread(pid: int)\n"
+    "Steal pid's credential and use for current thread.\n"
+    "if no arg is specified, it targets at winlogon.exe.");
+
+PyDoc_STRVAR(
+    elevate_execute_doc,
+    "elevate_execute(program_path: str, cmd: str, pid: int = 0, /)\n"
+    "--\n"
+    "\n"
+    "def elevate_execute(program_path: str, cmd: str, pid: int = 0)\n"
+    "Steal pid's credential and execute specified program.\n"
+    "if no arg is specified, it targets at winlogon.exe.\n"
+    "program_path can be omitted and included in cmd");
+
+PyDoc_STRVAR(
+    bypass_uac_exec_doc,
+    "bypass_uac_exec(program_path: str, cmd: str, /)\n"
+    "--\n"
+    "\n"
+    "def bypass_uac_exec(program_path: str, cmd: str)\n"
+    "Bypass UAC via ICMLuaUtils COM interface.\n"
+    "Requires that caller and target are both Microsoft signed.\n"
+    "program_path can be omitted and included in cmd");

