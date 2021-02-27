@@ -40,7 +40,7 @@ BOOL SetStratupReg(const WCHAR * key, const WCHAR * path)
 		0,
 		REG_SZ,
 		(BYTE*)path,
-		wcslen(path) * 2
+		(DWORD)(wcslen(path) * 2)
 	);
 	if (lRet != ERROR_SUCCESS)
 	{
