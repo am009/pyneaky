@@ -1,4 +1,11 @@
 from setuptools import setup, Extension
+import pathlib
+
+# The directory containing this file
+HERE = pathlib.Path(__file__).parent
+
+# The text of the README file
+README = (HERE / "README.md").read_text(encoding='utf-8')
 
 # TODO dynamically generates source files list?
 
@@ -16,8 +23,10 @@ module1 = Extension('neaky',
 setup(name='neaky',
       version='1.0.0',
       description='A python native module for some spy technique on Microsoft Windows.',
+      long_description=README,
+      long_description_content_type="text/markdown",
       url="https://github.com/am009/pyneaky",
-      author="am009@github",
+      author="Warren Wang",
       author_email="warrenwjk@gmail.com",
       license="MIT",
       classifiers=[

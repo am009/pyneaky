@@ -34,7 +34,7 @@ python ./setup.py build
 add module to pythonpath
 ```python
 import sys
-sys.path.append(r"C:\Users\warren\d\pyNeaky\pyneaky\build\lib.win-amd64-3.8")
+sys.path.append(r"C:\Users\warren\d\pyNeaky\pyneaky\build\lib.win-amd64-3.9")
 ```
 
 ## 目标
@@ -139,3 +139,34 @@ sys.path.append(r"C:\Users\warren\d\pyNeaky\pyneaky\build\lib.win-amd64-3.8")
 - 流程
     1. 增加函数实现
     2. 增加文档，注册到module
+
+
+
+- pypi初尝
+
+    首先使用https://github.com/joerick/cibuildwheel，增加`.github/workflows/wheels.yml`文件，一push就跑起来了，稍微等一会，windows下build出了针对各种版本的python的wheel，太强了，太省时间了啊！！！
+
+    [using testpypi](https://packaging.python.org/guides/using-testpypi/)
+
+    pypi似乎不管包内规范，似乎其实就是负责分发源码包和whl。下载build的结果，放到dist文件夹，首先`check-wheel-contents ./dist`，`twine check dist/*`检测一下。
+
+    没有问题后先上传到testpypi看看：
+
+    ````
+    twine upload --repository testpypi dist/*
+    ````
+
+    下载下来试试
+
+    ```cmd
+    python -m pip install --index-url https://test.pypi.org/simple/ neaky
+    ```
+
+    最后上传到真正的pypi仓库！！
+
+    ```
+    twine upload dist/*
+    ```
+
+    如果版本没有更新，就改了代码
+
