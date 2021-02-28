@@ -170,3 +170,24 @@ sys.path.append(r"C:\Users\warren\d\pyNeaky\pyneaky\build\lib.win-amd64-3.9")
 
     如果版本没有更新，就改了代码
 
+
+
+- python docstring
+
+  python的docstring是基于[reStructuredText](http://docutils.sourceforge.net/rst.html) ，并且使用了[Sphinx](http://sphinx-doc.org/)工具集拓展了一些功能。
+
+  [docstring内联代码](https://stackoverflow.com/questions/56892631/how-to-add-code-snippets-to-python-docstring-not-as-doctest) [Sphinx相关语法](https://pythonhosted.org/an_example_pypi_project/sphinx.html#code) [docstring formats on stackoverflow](https://stackoverflow.com/questions/3898572/what-is-the-standard-python-docstring-format/24385103#24385103) 我使用三个反引号注明python的markdown代码块可以用，似乎vscode还是通过markdown渲染的，而并不是支持推荐的docstring写法。。。因此有时只插入一个换行会导致没有换行。
+
+  此外似乎vscode会把正文中第一对括号识别成参数。。。
+
+  [vscode把docstring作为markdown渲染](https://stackoverflow.com/questions/57017994/what-is-the-python-docstring-format-supported-by-visual-studio-code) 
+
+  ```
+  Computes the distance from the origin to the point (x, y)
+  
+  :param x: the point's x-coordinate
+  :param y: the point's y-coordinate
+  :return: number. the distance from (0, 0) to the point (x, y)
+  ```
+
+  

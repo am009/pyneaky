@@ -22,7 +22,7 @@ module1 = Extension('neaky',
 
 setup(name='neaky',
       version='1.0.0',
-      description='A python native module for some spy technique on Microsoft Windows.',
+      description='A python native module providing some spyware function on Windows.',
       long_description=README,
       long_description_content_type="text/markdown",
       url="https://github.com/am009/pyneaky",
