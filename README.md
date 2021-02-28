@@ -14,6 +14,13 @@ features:
 ## example
 see [test/](https://github.com/am009/pyneaky/tree/main/test)
 
+```python
+import neaky; neaky.clipboard() # 返回剪切板文字
+neaky.screenshot('./s.bmp') # 截屏
+neaky.bypass_uac_exec(r"C:\Windows\System32\cmd.exe", "") # 弹出神奇的框执行cmd
+neaky.keylog_stdout(); neaky.message_loop() # 键盘监听
+```
+
 ## keylogger
 keylogger requires a message loop on main thread, so when finishing initiliaze, it's required to call `neaky.message_loop()` to start keylogging, which normally will not return and cannot be terminated by Exceptions like Ctrl-C. you have to do other stuffs by creating another thread. See `test/keylog_raw_file` as an example. To stop, use task manager to end task.
 when stopping raw input keylogger, message loop will return. Which will result in main thread exiting if there is not code after message_loop in main thread. This is because raw input keylogger creates a invisible window, when the keylogger stops, it destroys the window.
@@ -37,6 +44,9 @@ import sys
 sys.path.append(r"C:\Users\warren\d\pyNeaky\pyneaky\build\lib.win-amd64-3.9")
 ```
 
+
+
+## todo
 
 
 ## 目标
