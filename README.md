@@ -12,10 +12,10 @@ features:
 - bypass_uac_exec - elevate from uac restricted token to full token
 
 ## example
-see test/
+see [test/](https://github.com/am009/pyneaky/tree/main/test)
 
 ## keylogger
-keylogger requires a message loop on main thread, so when finishing initiliaze, it's required to call `neaky.message_loop()` to start keylogging, which normally will not return and cannot be terminated by Exceptions like Ctrl-C. you have to do other stuffs by creating another thread. See `test/keylog_raw_file` as an example.
+keylogger requires a message loop on main thread, so when finishing initiliaze, it's required to call `neaky.message_loop()` to start keylogging, which normally will not return and cannot be terminated by Exceptions like Ctrl-C. you have to do other stuffs by creating another thread. See `test/keylog_raw_file` as an example. To stop, use task manager to end task.
 when stopping raw input keylogger, message loop will return. Which will result in main thread exiting if there is not code after message_loop in main thread. This is because raw input keylogger creates a invisible window, when the keylogger stops, it destroys the window.
 
 ## install
@@ -37,6 +37,8 @@ import sys
 sys.path.append(r"C:\Users\warren\d\pyNeaky\pyneaky\build\lib.win-amd64-3.9")
 ```
 
+
+
 ## 目标
 
 原本该模块是作为一个c语言dll存在，通过判断被植入的exe，单个dll实现各种不同功能，包括注入到任务管理器实现进程隐藏，启动时自动提权到能提权的最高程度等等，通过rundll32.exe启动从而勉强算是有微软签名的程序。这些都是作为dll的优点，然而如果作为python的拓展，则必须依附于python.exe。因此这里只提供部分功能，上述功能的实现考虑通过编写另外的dll，利用本拓展提供的dll注入功能注入。
@@ -46,17 +48,8 @@ sys.path.append(r"C:\Users\warren\d\pyNeaky\pyneaky\build\lib.win-amd64-3.9")
 - 一个提权小dll，用python CFFI 调用, 用于先提权后执行命令, 方便双重提权，控制台控制是bypass uac，system还是组合。
 
 
-## stage2 todo
 
-- 异常处理
-- 注释
-- message loop 新线程，释放GIL的控制启动和停止。
-- get pid by name 返回list
-- keylog 事件驱动调用python的函数
-- 整理输出语句
-- 输出全部换成wchar，wprintf
-
-## notes - 笔记
+## 笔记
 
 [Coding Patterns for Python Extensions](https://pythonextensionpatterns.readthedocs.io/en/latest/index.html) 这本书不错
 
@@ -144,31 +137,36 @@ sys.path.append(r"C:\Users\warren\d\pyNeaky\pyneaky\build\lib.win-amd64-3.9")
 
 - pypi初尝
 
-    首先使用https://github.com/joerick/cibuildwheel，增加`.github/workflows/wheels.yml`文件，一push就跑起来了，稍微等一会，windows下build出了针对各种版本的python的wheel，太强了，太省时间了啊！！！
+    增加了pyproject.toml。另外MANIFEST.in也是必不可少的，因为默认只会包含setup.py内的source文件，因此所有的头文件都必须手动包含到sdist里。
 
-    [using testpypi](https://packaging.python.org/guides/using-testpypi/)
+    使用https://github.com/joerick/cibuildwheel，增加`.github/workflows/wheels.yml`文件，一push就跑起来了，稍微等一会，windows下build出了针对各种版本的python的wheel，太强了，太省时间了啊！！！
+
+    [using testpypi](https://packaging.python.org/guides/using-testpypi/) 
 
     pypi似乎不管包内规范，似乎其实就是负责分发源码包和whl。下载build的结果，放到dist文件夹，首先`check-wheel-contents ./dist`，`twine check dist/*`检测一下。
 
     没有问题后先上传到testpypi看看：
-
+    
     ````
-    twine upload --repository testpypi dist/*
+twine upload --repository testpypi dist/*
     ````
 
     下载下来试试
-
+    
     ```cmd
-    python -m pip install --index-url https://test.pypi.org/simple/ neaky
-    ```
-
+python -m pip install --index-url https://test.pypi.org/simple/ neaky
+    python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple neaky
+```
+    
     最后上传到真正的pypi仓库！！
-
-    ```
+    
+```
     twine upload dist/*
     ```
-
-    如果版本没有更新，就改了代码
+    
+    一个残忍的现实是，一旦上传了某个版本到pypi，就无法再覆盖了，它将永远占用该版本号。可以通过增加build tag（如从1.0.0变为1.0.0-1）（似乎只需要重命名whl？）的方法。而且`Only one sdist may be uploaded per release.` sdist无法通过build tag的方式重新上传。
+    
+    总之上传起来还是要慎重。感受到了什么是版本发布了。
 
 
 
